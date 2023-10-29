@@ -21,10 +21,10 @@ COLUMNS = ("instruction", "input", "output")
 # The template is specific for ui-gen data, be conscious when using for other data.
 
 TEMPLATE = Template('''<s>
-<|SYSTEM|>The response MUST be a valid JSON. Generate UI-DSL for the below input and context.<|END_SYSTEM|>
-{%- if context -%}<|CONTEXT|>{{ context }}<|END_CONTEXT|>{%- endif -%}
-<|INPUT|>{{ prompt }}<|END_INPUT|>
-<|OUTPUT|>```{{ response }}```<|END_OUTPUT|>
+<<SYS>>The response MUST be a valid JSON. Generate UI-DSL for the below input and context.<</SYS>>
+{%- if context -%}## Input: {{ context }}{%- endif -%}
+[INS]## Instruction: {{ prompt }}[/INS]
+## Response: ```{{ response }}```
 </s>''')
 
 def prepare(
