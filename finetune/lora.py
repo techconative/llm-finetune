@@ -173,7 +173,10 @@ def train(
 ) -> None:
     tokenizer = Tokenizer(checkpoint_dir)
     longest_seq_length, longest_seq_ix = get_longest_seq_length(train_data)
-    model.max_seq_length = longest_seq_length
+
+    # The existing code model.max_seq_length = longest_seq_length
+    # sets the maximum length based on the training data, which seem to less. Hence setting it to a hardcoded number.
+    model.max_seq_length = 500
     fabric.print(
         f"The longest sequence length in the train data is {longest_seq_length}, the model's maximum sequence length is"
         f" {model.max_seq_length} and context length is {model.config.block_size}"
