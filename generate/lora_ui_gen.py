@@ -28,12 +28,12 @@ lora_projection = False
 lora_mlp = False
 lora_head = False
 
-TEMPLATE = Template('''<s>
+TEMPLATE = Template('''
 <<SYS>>The response MUST be a valid JSON. Generate UI-DSL for the below input and context.<</SYS>>
 {%- if context -%}## Input: {{ context }}{%- endif -%}
 [INS]## Instruction: {{ prompt }}[/INS]
-## Response: ```{{ response }}```
-</s>''')
+## Response: 
+''')
 
 def main(
     prompt: str = "What food do lamas eat?",
@@ -153,7 +153,7 @@ def main(
     t = time.perf_counter() - t0
 
     output = tokenizer.decode(y)
-    output = output.split("### Response:")[1].strip()
+    # output = output.split("### Response:")[1].strip()
     fabric.print(output)
 
     tokens_generated = y.size(0) - prompt_length
@@ -164,7 +164,7 @@ def main(
 def generate_prompt(example: dict) -> str:
     """Generates a standardized message to prompt the model with an instruction, optional input and a
     'response' field."""
-    return TEMPLATE.render(prompt=example['instruction'], response=example['output'], context=example.get('input', ''))
+    return TEMPLATE.render(prompt=example['instruction'], context=example.get('input', ''))
 
 if __name__ == "__main__":
     from jsonargparse import CLI
