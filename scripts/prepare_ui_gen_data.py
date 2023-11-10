@@ -24,7 +24,7 @@ TEMPLATE = Template('''<s>
 <<SYS>>The response MUST be a valid JSON. Generate UI-DSL for the below input and context.<</SYS>>
 {%- if context -%}## Input: {{ context }}{%- endif -%}
 [INS]## Instruction: {{ prompt }}[/INS]
-## Response: ```{{ response }}```
+## UI-DSL: ```{{ response }}```
 </s>''')
 
 def prepare(

@@ -32,7 +32,7 @@ TEMPLATE = Template('''
 <<SYS>>The response MUST be a valid JSON. Generate UI-DSL for the below input and context.<</SYS>>
 {%- if context -%}## Input: {{ context }}{%- endif -%}
 [INS]## Instruction: {{ prompt }}[/INS]
-## Response: 
+## UI-DSL: 
 ''')
 
 def main(
