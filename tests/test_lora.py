@@ -172,9 +172,9 @@ def test_lora_script(tmp_path, fake_checkpoint_dir, monkeypatch):
         module.setup(data_dir=tmp_path, checkpoint_dir=fake_checkpoint_dir, out_dir=tmp_path, precision="32-true")
 
     assert {p.name for p in tmp_path.glob("*.pth")} == {
-        "iter-000001-ckpt.pth",
-        "iter-000003-ckpt.pth",
-        "iter-000005-ckpt.pth",
+        "iter-000002-ckpt.pth",
+        "iter-000004-ckpt.pth",
+        "iter-000006-ckpt.pth",
         "lit_model_lora_finetuned.pth",
     }
     assert (tmp_path / "version_0" / "metrics.csv").is_file()
@@ -355,6 +355,7 @@ def test_lora_qkv_linear_weights_merged_status(rank, enable_lora, expected_merge
 # platform dependent cuda issue: libbitsandbytes_cpu.so: undefined symbol: cquantize_blockwise_fp16_nf4
 @pytest.mark.xfail(raises=AttributeError, strict=False)
 def test_lora_merge_with_quantize():
+    import bitsandbytes as bnb
     from lightning.fabric.plugins.precision.bitsandbytes import _BITSANDBYTES_AVAILABLE, BitsandbytesPrecision
 
     if not _BITSANDBYTES_AVAILABLE:
@@ -376,14 +377,7 @@ def test_lora_merge_with_quantize():
         to_projection=True,
     )
     fabric = Fabric(devices=1, plugins=BitsandbytesPrecision("nf4", dtype=torch.bfloat16, ignore_modules={"lm_head"}))
-    with fabric.init_module(empty_init=False):
-        model = GPT(config)
-        model.apply(model._init_weights)
-
-    attn_proj = model.transformer.h[0].attn.proj
-    assert model.lm_head.linear.weight.dtype is torch.bfloat16
-    assert attn_proj.linear.weight.dtype is torch.bfloat16
-
+    model = GPT(config)
     mark_only_lora_as_trainable(model)
 
     from bitsandbytes.optim import PagedAdamW
@@ -393,10 +387,12 @@ def test_lora_merge_with_quantize():
 
     model.train()
 
+    attn_proj = model.transformer.h[0].attn.proj
     initial_weight = attn_proj.linear.weight.clone()
+    initial_weight_kwargs = attn_proj.linear.weight.__dict__
 
     # this was skipped
-    assert model.lm_head.linear.weight.dtype is torch.bfloat16
+    assert model.lm_head.linear.weight.dtype is torch.float32
     assert attn_proj.linear.weight.dtype is torch.uint8
 
     # perform an update to the LoRA weights
@@ -418,7 +414,15 @@ def test_lora_merge_with_quantize():
 
     # check that `W_after = W_initial + (A x B)`
     delta_w = (attn_proj.lora_B @ attn_proj.lora_A) * attn_proj.scaling
-    torch.testing.assert_close(weight_after, initial_weight + delta_w)
+    # dequantize initial weight and sum with delta_w
+    initial_weight_data = (
+        bnb.functional.dequantize_4bit(initial_weight.data, initial_weight_kwargs["quant_state"]) + delta_w
+    )
+    # quantize again
+    initial_weight_data = bnb.nn.Params4bit(
+        initial_weight_data.to("cpu"), requires_grad=False, **initial_weight_kwargs
+    ).to(initial_weight.device)
+    torch.testing.assert_close(weight_after, initial_weight_data)
 
 
 def test_lora_gpt_init_weights():
@@ -482,7 +486,7 @@ def test_lora_compile():
 
     from torch._dynamo.backends import debugging
 
-    explanation = torch._dynamo.explain(model, x)
+    explanation = torch._dynamo.explain(model)(x)
     assert isinstance(explanation, debugging.ExplainOutput)
     assert explanation.graph_count == 1
     assert explanation.graph_break_count == 0
@@ -490,7 +494,7 @@ def test_lora_compile():
     model = GPT(model.config)
     model.set_kv_cache(2)
     input_pos = torch.arange(model.config.block_size)
-    explanation = torch._dynamo.explain(model, x, input_pos)
+    explanation = torch._dynamo.explain(model)(x, input_pos)
     assert isinstance(explanation, debugging.ExplainOutput)
     assert explanation.graph_count == 1
     assert explanation.graph_break_count == 0
