@@ -19,6 +19,7 @@ from lit_gpt.lora import GPT, Block, Config, merge_lora_weights
 from lit_gpt.utils import check_valid_checkpoint_dir, get_default_supported_precision, gptq_quantization, lazy_load
 from common.ui_gen_config import hyper_params
 
+
 lora_r = hyper_params["lora_r"]
 lora_alpha = hyper_params["lora_alpha"]
 lora_dropout = hyper_params["lora_dropout"]
@@ -109,32 +110,7 @@ def main(
         to_head=lora_head,
     )
 
-    if quantize is not None and devices > 1:
-        raise NotImplementedError
-    if quantize == "gptq.int4":
-        model_file = "lit_model_gptq.4bit.pth"
-        if not (checkpoint_dir / model_file).is_file():
-            raise ValueError("Please run `python quantize/gptq.py` first")
-    else:
-        model_file = "lit_model.pth"
-    checkpoint_path = checkpoint_dir / model_file
-
-    fabric.print(f"Loading model {str(checkpoint_path)!r} with {config.__dict__}", file=sys.stderr)
-    t0 = time.perf_counter()
-    with fabric.init_module(empty_init=True), gptq_quantization(quantize == "gptq.int4"):
-        model = GPT(config)
-    fabric.print(f"Time to instantiate model: {time.perf_counter() - t0:.02f} seconds.", file=sys.stderr)
-
-    t0 = time.perf_counter()
-    checkpoint = lazy_load(checkpoint_path)
-    lora_checkpoint = lazy_load(lora_path)
-    checkpoint.update(lora_checkpoint.get("model", lora_checkpoint))
-    model.load_state_dict(checkpoint)
-    fabric.print(f"Time to load the model weights: {time.perf_counter() - t0:.02f} seconds.", file=sys.stderr)
-
-    model.eval()
-    merge_lora_weights(model)
-    model = fabric.setup(model)
+    model = load_model(checkpoint_dir, config, devices, fabric, lora_path, quantize)
 
     tokenizer = Tokenizer(checkpoint_dir)
     sample = {"instruction": prompt, "input": input}
@@ -161,6 +137,34 @@ def main(
     fabric.print(f"\n\nTime for inference: {t:.02f} sec total, {tokens_generated / t:.02f} tokens/sec", file=sys.stderr)
     if fabric.device.type == "cuda":
         fabric.print(f"Memory used: {torch.cuda.max_memory_allocated() / 1e9:.02f} GB", file=sys.stderr)
+
+
+def load_model(checkpoint_dir, config, devices, fabric, lora_path, quantize):
+    if quantize is not None and devices > 1:
+        raise NotImplementedError
+    if quantize == "gptq.int4":
+        model_file = "lit_model_gptq.4bit.pth"
+        if not (checkpoint_dir / model_file).is_file():
+            raise ValueError("Please run `python quantize/gptq.py` first")
+    else:
+        model_file = "lit_model.pth"
+    checkpoint_path = checkpoint_dir / model_file
+    fabric.print(f"Loading model {str(checkpoint_path)!r} with {config.__dict__}", file=sys.stderr)
+    t0 = time.perf_counter()
+    with fabric.init_module(empty_init=True), gptq_quantization(quantize == "gptq.int4"):
+        model = GPT(config)
+    fabric.print(f"Time to instantiate model: {time.perf_counter() - t0:.02f} seconds.", file=sys.stderr)
+    t0 = time.perf_counter()
+    checkpoint = lazy_load(checkpoint_path)
+    lora_checkpoint = lazy_load(lora_path)
+    checkpoint.update(lora_checkpoint.get("model", lora_checkpoint))
+    model.load_state_dict(checkpoint)
+    fabric.print(f"Time to load the model weights: {time.perf_counter() - t0:.02f} seconds.", file=sys.stderr)
+    model.eval()
+    merge_lora_weights(model)
+    model = fabric.setup(model)
+    return model
+
 
 def generate_prompt(example: dict) -> str:
     """Generates a standardized message to prompt the model with an instruction, optional input and a
