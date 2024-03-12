@@ -30,7 +30,7 @@ You can download the data using git lfs:
 
 ```bash
 # Make sure you have git-lfs installed (https://git-lfs.com):
-git lfs install
+sudo apt install git-lfs
 ```
 
 ```bash
@@ -51,11 +51,12 @@ on it, you need to read, tokenize, and write the data in binary chunks. This wil
 streaming dataset that comes with lit-gpt. You will need to have the tokenizer config available:
 
 ```bash
-pip install huggingface_hub sentencepiece
+pip install 'huggingface_hub[hf_transfer] @ git+https://github.com/huggingface/huggingface_hub' sentencepiece
 
 python scripts/download.py \
    --repo_id meta-llama/Llama-2-7b-chat-hf \
-   --access_token your_hf_token
+   --access_token your_hf_token \
+   --tokenizer_only true
 ```
 
 Then, run
@@ -90,7 +91,7 @@ Running the pretraining script with its default settings requires at least 4 GPU
 ```bash
 python pretrain/redpajama.py \
   --devices 4 \
-  --train_data_dir data/lit-redpajama
+  --io.train_data_dir data/lit-redpajama
 ```
 
 For running on the sample dataset:
@@ -98,7 +99,7 @@ For running on the sample dataset:
 ```bash
 python pretrain/redpajama.py \
   --devices 4 \
-  --train_data_dir data/lit-redpajama-sample
+  --io.train_data_dir data/lit-redpajama-sample
 ```
 
 The script will save checkpoints periodically to the folder `out/`.
@@ -108,8 +109,8 @@ By default, the `pretrain/redpajama.py` script will pretrain the Llama 2 7B mode
 
 You can easily change the size of the model by passing a different string to the model name variable
 
-```python
-model_name = "Llama-2-7b-hf"
+```shell
+--model_name "Llama-2-7b-hf"
 ```
 
 at the top of this script.
@@ -130,7 +131,7 @@ to launch the script across machines:
 - [Barebones cluster](https://lightning.ai/docs/fabric/stable/guide/multi_node/barebones.html)
 - [MPI](https://lightning.ai/docs/fabric/stable/guide/multi_node/other.html)
 
-The [script contains several configurations and hyperparameters](https://github.com/Lightning-AI/lit-gpt/blob/main/pretrain/openwebtext.py#L23-L46) you can tweak.
+The exposes several hyperparameters you can tweak through the command line.
 
 For instance, `micro_batch_size` should be adjusted so the process will use the available
 GPU memory. For more tips to avoid out-of-memory issues, please also see the more detailed

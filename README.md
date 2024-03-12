@@ -26,23 +26,28 @@ Hackable [implementation](lit_gpt/model.py) of state-of-the-art open-source larg
 
 Supports the following popular model checkpoints:
 
-| Model and usage                                                                | Model size                         | Reference                                                                                        |
-|--------------------------------------------------------------------------------|------------------------------------|--------------------------------------------------------------------------------------------------|
-| Meta AI [Llama 2](tutorials/download_llama_2.md)                               | 7B, 13B, 70B                       | [Touvron et al. 2023](https://arxiv.org/abs/2307.09288)                                          |
-| Stability AI [FreeWilly2](tutorials/download_freewilly_2.md) (Stable Beluga 2) | 70B                                | [Stability AI 2023](https://stability.ai/blog/stable-beluga-large-instruction-fine-tuned-models) |
-| Stability AI StableCode                                                        | 3B                                 | [Stability AI 2023](https://stability.ai/blog/stablecode-llm-generative-ai-coding)               |
-| TII UAE [Falcon](tutorials/download_falcon.md)                                 | 7B, 40B, 180B                      | [TII 2023](https://falconllm.tii.ae)                                                             |
-| OpenLM Research [OpenLLaMA](tutorials/download_openllama.md)                   | 3B, 7B, 13B                        | [Geng & Liu 2023](https://github.com/openlm-research/open_llama)                                 |
-| LMSYS [Vicuna](tutorials/download_vicuna.md)                                   | 7B, 13B, 33B                       | [Li et al. 2023](https://lmsys.org/blog/2023-03-30-vicuna/)                                      |
-| LMSYS [LongChat](tutorials/download_longchat.md)                               | 7B, 13B                            | [LongChat Team 2023](https://lmsys.org/blog/2023-06-29-longchat/)                                |
-| Together [RedPajama-INCITE](tutorials/download_redpajama_incite.md)            | 3B, 7B                             | [Together 2023](https://together.ai/blog/redpajama-models-v1)                                    |
-| EleutherAI [Pythia](tutorials/download_pythia.md)                              | {70,160,410}M, {1,1.4,2.8,6.9,12}B | [Biderman et al. 2023](https://arxiv.org/abs/2304.01373)                                         |
-| StabilityAI [StableLM](tutorials/download_stablelm.md)                         | 3B, 7B                             | [Stability AI 2023](https://github.com/Stability-AI/StableLM)                                    |
-| Platypus                                                                       | 7B, 13B, 70B                       | [Lee, Hunter, and Ruiz 2023](https://arxiv.org/abs/2308.07317)                                   |
-| NousResearch Nous-Hermes                                                       | 7B, 13B, 70B                       | [Org page](https://huggingface.co/NousResearch)                                                  |
-| Meta AI [Code Llama](tutorials/download_code_llama.md)                         | 7B, 13B, 34B                       | [Rozière et al. 2023](https://arxiv.org/abs/2308.12950)                                          |
-| Microsoft Research [phi-1.5](tutorials/download_phi15.md)                      | 1.3B                               | [Li et al. 2023](https://arxiv.org/abs/2309.05463)                                               |
-| Mistral AI [Mistral](tutorials/download_mistral.md)                            | 7B                                 | [Mistral  website](https://mistral.ai/)                                                          |
+| Model                                                                                | Model size                               | Reference                                                                                                                    |
+|--------------------------------------------------------------------------------------|------------------------------------------|------------------------------------------------------------------------------------------------------------------------------|
+| [Code Llama](tutorials/download_code_llama.md) by Meta AI                            | 7B, 13B, 34B, 70B                        | [Rozière et al. 2023](https://arxiv.org/abs/2308.12950)                                                                      |
+| [Dolly](tutorials/download_dolly.md) by Databricks                                   | 3B, 7B, 12B                              | [Conover et al. 2023](https://www.databricks.com/blog/2023/04/12/dolly-first-open-commercially-viable-instruction-tuned-llm) |
+| [Falcon](tutorials/download_falcon.md) by TII UAE                                    | 7B, 40B, 180B                            | [TII 2023](https://falconllm.tii.ae)                                                                                         |
+| [FreeWilly2](tutorials/download_freewilly_2.md) (Stable Beluga 2) by Stability AI    | 70B                                      | [Stability AI 2023](https://stability.ai/blog/stable-beluga-large-instruction-fine-tuned-models)                             |
+| [Function Calling Llama 2](tutorials/download_function_calling_llama_2.md) by Trelis | 7B                                       | [Trelis et al. 2023](https://huggingface.co/Trelis/Llama-2-7b-chat-hf-function-calling-v2)                                   |
+| [Gemma](tutorials/download_gemma.md) by Google                                       | 2B, 7B                                   | [Google Team, Google Deepmind](https://storage.googleapis.com/deepmind-media/gemma/gemma-report.pdf)                         |
+| [Llama 2](tutorials/download_llama_2.md) by Meta AI                                  | 7B, 13B, 70B                             | [Touvron et al. 2023](https://arxiv.org/abs/2307.09288)                                                                      |
+| [LongChat](tutorials/download_longchat.md) by LMSYS                                  | 7B, 13B                                  | [LongChat Team 2023](https://lmsys.org/blog/2023-06-29-longchat/)                                                            |
+| [Mistral and Mixtral](tutorials/download_mistral.md) by Mistral AI                   | 7B                                       | [Mistral website](https://mistral.ai/)                                                                                       |
+| [Nous-Hermes](https://huggingface.co/NousResearch/Nous-Hermes-13b) by NousResearch   | 7B, 13B, 70B                             | [Org page](https://huggingface.co/NousResearch)                                                                              |
+| [OpenLLaMA](tutorials/download_openllama.md) by OpenLM Research                      | 3B, 7B, 13B                              | [Geng & Liu 2023](https://github.com/openlm-research/open_llama)                                                             |
+| [Phi](tutorials/download_phi.md) by Microsoft Research                               | 1.3B, 2.7B                               | [Li et al. 2023](https://arxiv.org/abs/2309.05463)                                                                           |
+| [Platypus](https://huggingface.co/garage-bAInd/Platypus-30B) by Lee at el.           | 7B, 13B, 70B                             | [Lee, Hunter, and Ruiz 2023](https://arxiv.org/abs/2308.07317)                                                               |
+| [Pythia](tutorials/download_pythia.md) by EleutherAI                                 | {14,31,70,160,410}M, {1,1.4,2.8,6.9,12}B | [Biderman et al. 2023](https://arxiv.org/abs/2304.01373)                                                                     |
+| [RedPajama-INCITE](tutorials/download_redpajama_incite.md) by Together               | 3B, 7B                                   | [Together 2023](https://together.ai/blog/redpajama-models-v1)                                                                |
+| [StableCode](tutorials/download_stablecode.md) by Stability AI      | 3B                                       | [Stability AI 2023](https://stability.ai/blog/stablecode-llm-generative-ai-coding)                                           |
+| [StableLM](tutorials/download_stablelm.md) by Stability AI                           | 3B, 7B                                   | [Stability AI 2023](https://github.com/Stability-AI/StableLM)                                                                |
+| [StableLM Zephyr](tutorials/download_stablelm.md) by Stability AI                    | 3B                                       | [Stability AI 2023](https://stability.ai/blog/stablecode-llm-generative-ai-coding)                                           |
+| [TinyLlama](tutorials/download_tinyllama.md) by Zhang et al.                         | 1.1B                                     | [Zhang et al. 2023](https://github.com/jzhang38/TinyLlama)                                                                   |
+| [Vicuna](tutorials/download_vicuna.md) by LMSYS                                      | 7B, 13B, 33B                             | [Li et al. 2023](https://lmsys.org/blog/2023-03-30-vicuna/)                                                                  |
 
 This implementation extends on [Lit-LLaMA](https://github.com/lightning-AI/lit-llama) and [nanoGPT](https://github.com/karpathy/nanoGPT), and it's **powered by [Lightning Fabric](https://lightning.ai/docs/fabric/stable/) ⚡**.
 
@@ -52,17 +57,11 @@ This implementation extends on [Lit-LLaMA](https://github.com/lightning-AI/lit-l
 
 **🏆 NeurIPS 2023 Large Language Model Efficiency Challenge: 1 LLM + 1 GPU + 1 Day**
 
-The Lit-GPT repository is the official starter kit for the [NeurIPS 2023 LLM Efficiency Challenge](https://llm-efficiency-challenge.github.io), which is a competition focused on finetuning an existing non-instruction tuned LLM for 24 hours on a single GPU. The competition has two tracks, one for the A100 and another for the 4090 GPUs.
-
-If you are interested in participating, you can learn more about the NeurIPS LLM Efficiency Challenge on the official website [here](https://llm-efficiency-challenge.github.io). Also see the [Lit-GPT NeurIPS Challenge Quickstart Guide](tutorials/neurips_challenge_quickstart.md) for helpful tips.
-
-**The submission deadline is Oct 25th, 2023.**
+The Lit-GPT repository was the official starter kit for the [NeurIPS 2023 LLM Efficiency Challenge](https://llm-efficiency-challenge.github.io), which is a competition focused on finetuning an existing non-instruction tuned LLM for 24 hours on a single GPU.
 
 ---
 
-
 &nbsp;
-
 
 ## Lit-GPT design principles
 
@@ -94,25 +93,11 @@ git clone https://github.com/Lightning-AI/lit-gpt
 cd lit-gpt
 ```
 
-Install the minimal dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
-Install with all dependencies (including quantization, sentencepiece, tokenizers for Llama models, etc.):
+Install with all dependencies (including CLI, quantization, tokenizers for all models, etc.):
 
 ```bash
 pip install -r requirements-all.txt
 ```
-
-**(Optional) install Flash Attention 2**
-
-```bash
-MAX_JOBS=4 pip install flash-attn --no-build-isolation
-```
-
-You are all set! 🎉
 
 &nbsp;
 
@@ -140,7 +125,7 @@ python chat/base.py
 
 ### Run large models on smaller consumer devices
 
-We support 4-bit quantization (as in QLoRA), (bnb.nf4, bnb.nf4-dq, bnb.fp4, bnb.fp4-dq, gptq.int4) and 8-bit quantization (bnb.int8) for inference by following [this guide](tutorials/quantize.md).
+We support 4-bit quantization (as in QLoRA), (bnb.nf4, bnb.nf4-dq, bnb.fp4, bnb.fp4-dq) and 8-bit quantization (bnb.int8) for inference by following [this guide](tutorials/quantize.md).
 
 &nbsp;
 
@@ -220,7 +205,7 @@ Follow this guide to start pretraining on
 
 ## Supported datasets
 
-Lit-GPT includes a variety of dataset preparation scripts for finetuning and pretraining. Additional information about the datasets and dataset preparation is provided in the [Preparing Datasets](https://github.com/Lightning-AI/lit-gpt/blob/main/tutorials/prepare_dataset.md) tutorial.
+Lit-GPT includes a variety of dataset preparation scripts for finetuning and pretraining. Additional information about the datasets and dataset preparation is provided in the [Preparing Datasets](tutorials/prepare_dataset.md) tutorial.
 
 
 &nbsp;
@@ -263,9 +248,23 @@ Don't forget to [join our Discord](https://discord.gg/VptPCZkGNa)!
 - [@karpathy](https://github.com/karpathy) for [nanoGPT](https://github.com/karpathy/nanoGPT)
 - [@EleutherAI](https://github.com/EleutherAI) for [GPT-NeoX](https://github.com/EleutherAI/gpt-neox) and the [Evaluation Harness](https://github.com/EleutherAI/lm-evaluation-harness)
 - [@TimDettmers](https://github.com/TimDettmers) for [bitsandbytes](https://github.com/TimDettmers/bitsandbytes)
-- [@IST-DASLab](https://github.com/IST-DASLab) for [GPTQ](https://github.com/IST-DASLab/gptq)
 - [@Microsoft](https://github.com/microsoft) for [LoRA](https://github.com/microsoft/LoRA)
 - [@tridao](https://github.com/tridao) for [Flash Attention 2](https://github.com/Dao-AILab/flash-attention)
+
+&nbsp;
+
+## Citation
+
+If you use Lit-GPT in your research, please cite the following work:
+
+```bibtex
+@misc{lit-gpt-2023,
+  author       = {Lightning AI},
+  title        = {Lit-GPT},
+  howpublished = {\url{https://github.com/Lightning-AI/lit-gpt}},
+  year         = {2023},
+}
+```
 
 &nbsp;
 

@@ -113,6 +113,7 @@ def prepare_sample(example: dict, tokenizer: Tokenizer, max_length: int, mask_in
     in the label that correspond to the original input prompt get masked out (default).
     """
     full_prompt = generate_prompt(example)
+    print(full_prompt)
     full_prompt_and_response = full_prompt + example["output"]
     encoded_full_prompt = tokenizer.encode(full_prompt, max_length=max_length)
     encoded_full_prompt_and_response = tokenizer.encode(full_prompt_and_response, eos=True, max_length=max_length)

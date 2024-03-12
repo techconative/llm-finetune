@@ -20,20 +20,23 @@ which will print
 
 ```text
 codellama/CodeLlama-7b-hf
-codellama/CodeLlama-7b-Python-hf
-codellama/CodeLlama-7b-Instruct-hf
 codellama/CodeLlama-13b-hf
-codellama/CodeLlama-13b-Python-hf
-codellama/CodeLlama-13b-Instruct-hf
 codellama/CodeLlama-34b-hf
+codellama/CodeLlama-70b-hf
+codellama/CodeLlama-7b-Python-hf
+codellama/CodeLlama-13b-Python-hf
 codellama/CodeLlama-34b-Python-hf
+codellama/CodeLlama-70b-Python-hf
+codellama/CodeLlama-7b-Instruct-hf
+codellama/CodeLlama-13b-Instruct-hf
 codellama/CodeLlama-34b-Instruct-hf
+codellama/CodeLlama-70b-Instruct-hf
 ```
 
 In order to use a specific checkpoint, for instance [CodeLlama-7b-Python-hf](https://huggingface.co/codellama/CodeLlama-7b-Python-hf), download the weights and convert the checkpoint to the lit-gpt format.
 
 ```bash
-pip install huggingface_hub
+pip install 'huggingface_hub[hf_transfer] @ git+https://github.com/huggingface/huggingface_hub'
 
 python scripts/download.py --repo_id codellama/CodeLlama-7b-Python-hf
 
