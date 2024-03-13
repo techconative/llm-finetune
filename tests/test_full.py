@@ -1,19 +1,18 @@
+# Copyright Lightning AI. Licensed under the Apache License 2.0, see LICENSE file.
+
+import os
 from contextlib import redirect_stdout
 from io import StringIO
+from unittest import mock
 from unittest.mock import Mock
 
 import torch
 
 
+@mock.patch.dict(os.environ, {"LT_ACCELERATOR": "cpu"})
 def test_full_script(tmp_path, fake_checkpoint_dir, monkeypatch):
     import finetune.full as module
-
-    module.gradient_accumulation_iters = 1
-    module.save_interval = 2
-    module.eval_interval = 2
-    module.eval_iters = 2
-    module.eval_max_new_tokens = 1
-    module.max_iters = 6
+    from lit_gpt.args import EvalArgs, IOArgs, TrainArgs
 
     data = [
         {"input_ids": torch.tensor([0, 1, 2]), "labels": torch.tensor([1, 2, 3])},
@@ -35,17 +34,24 @@ def test_full_script(tmp_path, fake_checkpoint_dir, monkeypatch):
 
     stdout = StringIO()
     with redirect_stdout(stdout):
-        module.setup(data_dir=tmp_path, checkpoint_dir=fake_checkpoint_dir, out_dir=tmp_path, precision="32-true")
+        module.setup(
+            io=IOArgs(
+                train_data_dir=tmp_path, val_data_dir=tmp_path, checkpoint_dir=fake_checkpoint_dir, out_dir=tmp_path
+            ),
+            precision="32-true",
+            train=TrainArgs(global_batch_size=1, save_interval=2, epochs=1, epoch_size=6, micro_batch_size=1),
+            eval=EvalArgs(interval=2, max_iters=2, max_new_tokens=1),
+        )
 
     assert {p.name for p in tmp_path.glob("*.pth")} == {
-        "iter-000001-ckpt.pth",
-        "iter-000003-ckpt.pth",
-        "iter-000005-ckpt.pth",
+        "step-000002.pth",
+        "step-000004.pth",
+        "step-000006.pth",
         "lit_model_finetuned.pth",
     }
     assert (tmp_path / "version_0" / "metrics.csv").is_file()
 
     logs = stdout.getvalue()
-    assert logs.count("optimizer.step") == module.max_iters
-    assert logs.count("val loss") == module.max_iters // module.eval_interval
+    assert logs.count("optimizer.step") == 6
+    assert logs.count("val loss") == 3
     assert "of trainable parameters: 1,888" in logs
