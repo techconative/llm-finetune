@@ -1,4 +1,7 @@
+# Copyright Lightning AI. Licensed under the Apache License 2.0, see LICENSE file.
+
 """Implementation derived from https://github.com/tloen/alpaca-lora"""
+
 import json
 import os
 import sys
@@ -14,6 +17,7 @@ wd = Path(__file__).parent.parent.resolve()
 sys.path.append(str(wd))
 
 from lit_gpt.tokenizer import Tokenizer
+from lit_gpt.utils import CLI
 
 
 def prepare(
@@ -51,7 +55,7 @@ def prepare(
 
     from datasets import load_dataset
 
-    dataset = load_dataset(data_repo_id, use_auth_token=access_token)
+    dataset = load_dataset(data_repo_id, token=access_token)
     train_data = format_dataset(dataset["train"], include_multiturn_conversations)
 
     # test set is present but doesn't have any solutions, so we cannot use it here
@@ -140,12 +144,7 @@ def prepare_sample(example: dict, tokenizer: Tokenizer, max_length: int, mask_in
     if mask_inputs:
         labels[: len(encoded_full_prompt)] = ignore_index
 
-    return {
-        **example,
-        "input_ids": encoded_full_prompt_and_response,
-        "input_ids_no_response": encoded_full_prompt,
-        "labels": labels,
-    }
+    return {**example, "input_ids": encoded_full_prompt_and_response, "labels": labels}
 
 
 def generate_prompt(example: dict) -> str:
@@ -166,6 +165,4 @@ def generate_prompt(example: dict) -> str:
 
 
 if __name__ == "__main__":
-    from jsonargparse import CLI
-
     CLI(prepare)

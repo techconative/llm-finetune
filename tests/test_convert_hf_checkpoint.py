@@ -1,3 +1,5 @@
+# Copyright Lightning AI. Licensed under the Apache License 2.0, see LICENSE file.
+
 from unittest import mock
 
 import pytest
@@ -95,6 +97,7 @@ def test_llama2_70b_conversion():
         "transformer.h.5.attn.proj.weight": (8192, 8192),
         "transformer.h.5.mlp.fc_1.weight": (28672, 8192),
         "transformer.wte.weight": (32000, 8192),
+        "lm_head.weight": (32000, 8192),  # due to weight tying lm_head is in the converted weights
     }
 
 
@@ -102,12 +105,12 @@ def test_convert_hf_checkpoint(tmp_path):
     from scripts.convert_hf_checkpoint import convert_hf_checkpoint
 
     with pytest.raises(ValueError, match="to contain .bin"):
-        convert_hf_checkpoint(checkpoint_dir=tmp_path, model_name="pythia-70m")
+        convert_hf_checkpoint(checkpoint_dir=tmp_path, model_name="pythia-14m")
 
     bin_file = tmp_path / "foo.bin"
     bin_file.touch()
     with mock.patch("scripts.convert_hf_checkpoint.lazy_load") as load:
-        convert_hf_checkpoint(checkpoint_dir=tmp_path, model_name="pythia-70m")
+        convert_hf_checkpoint(checkpoint_dir=tmp_path, model_name="pythia-14m")
     load.assert_called_with(bin_file)
 
     assert {p.name for p in tmp_path.glob("*")} == {"foo.bin", "lit_config.json", "lit_model.pth"}

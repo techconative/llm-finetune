@@ -1,10 +1,12 @@
+# Copyright Lightning AI. Licensed under the Apache License 2.0, see LICENSE file.
+
 """Implementation derived from https://github.com/tloen/alpaca-lora"""
+
 import json
 import sys
 from pathlib import Path
 from typing import Optional
 
-import requests
 import torch
 from tqdm import tqdm
 
@@ -13,12 +15,13 @@ wd = Path(__file__).parent.parent.resolve()
 sys.path.append(str(wd))
 
 from lit_gpt.tokenizer import Tokenizer
+from lit_gpt.utils import CLI
+from scripts.prepare_alpaca import download_if_missing
 
 
 def prepare(
     destination_path: Path = Path("data/longform"),
     checkpoint_dir: Path = Path("checkpoints/stabilityai/stablelm-base-alpha-3b"),
-    seed: int = 42,
     mask_inputs: bool = False,  # as in alpaca-lora
     ignore_index: int = -1,
     max_seq_length: Optional[int] = None,
@@ -88,14 +91,6 @@ def prepare(
     torch.save(test_data, destination_path / "test.pt")
 
 
-def download_if_missing(file_path: Path, file_url: str) -> None:
-    """Downloads the raw json data file and saves it in the given destination."""
-    if file_path.exists() and file_path.stat().st_size > 0:
-        return
-    with open(file_path, "w", encoding="utf-8") as f:
-        f.write(requests.get(file_url).text)
-
-
 def prepare_sample(example: dict, tokenizer: Tokenizer, max_length: int, mask_inputs: bool, ignore_index: int) -> dict:
     """Processes a single sample.
 
@@ -123,12 +118,7 @@ def prepare_sample(example: dict, tokenizer: Tokenizer, max_length: int, mask_in
     if mask_inputs:
         labels[: len(encoded_full_prompt)] = ignore_index
 
-    return {
-        **example,
-        "input_ids": encoded_full_prompt_and_response,
-        "input_ids_no_response": encoded_full_prompt,
-        "labels": labels,
-    }
+    return {**example, "input_ids": encoded_full_prompt_and_response, "labels": labels}
 
 
 def generate_prompt(example: dict) -> str:
@@ -143,6 +133,4 @@ def generate_prompt(example: dict) -> str:
 
 
 if __name__ == "__main__":
-    from jsonargparse import CLI
-
     CLI(prepare)

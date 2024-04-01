@@ -1,3 +1,5 @@
+# Copyright Lightning AI. Licensed under the Apache License 2.0, see LICENSE file.
+
 # saves the openwebtext dataset to a binary file for training. following was helpful:
 # https://github.com/HazyResearch/flash-attention/blob/main/training/src/datamodules/language_modeling_hf.py
 import os
@@ -13,6 +15,7 @@ wd = Path(__file__).parent.parent.resolve()
 sys.path.append(str(wd))
 
 from lit_gpt import Tokenizer
+from lit_gpt.utils import CLI
 
 
 def prepare(
@@ -75,6 +78,4 @@ def prepare(
 
 
 if __name__ == "__main__":
-    from jsonargparse import CLI
-
     CLI(prepare)

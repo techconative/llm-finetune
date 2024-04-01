@@ -1,3 +1,5 @@
+# Copyright Lightning AI. Licensed under the Apache License 2.0, see LICENSE file.
+
 """This script merges the LoRA weights with the base model"""
 
 import sys
@@ -12,7 +14,7 @@ wd = Path(__file__).parent.parent.resolve()
 sys.path.append(str(wd))
 
 from lit_gpt.lora import GPT, Config, lora_filter, merge_lora_weights
-from lit_gpt.utils import check_valid_checkpoint_dir, get_default_supported_precision, lazy_load
+from lit_gpt.utils import CLI, check_valid_checkpoint_dir, get_default_supported_precision, lazy_load
 
 lora_r = 16
 lora_alpha = 32
@@ -24,12 +26,20 @@ lora_projection = True
 lora_mlp = True
 lora_head = True
 
-
 def merge_lora(
     lora_path: Path = Path("out/lora/alpaca/lit_model_lora_finetuned.pth"),
     checkpoint_dir: Path = Path("checkpoints/stabilityai/stablelm-base-alpha-3b"),
     out_dir: Path = Path("out/lora/checkpoint"),
     precision: Optional[str] = None,
+    lora_r: int = 8,
+    lora_alpha: int = 16,
+    lora_dropout: float = 0.05,
+    lora_query: bool = True,
+    lora_key: bool = False,
+    lora_value: bool = True,
+    lora_projection: bool = False,
+    lora_mlp: bool = False,
+    lora_head: bool = False,
 ) -> None:
     """Generates a response based on a given instruction and an optional input.
     This script will only work with checkpoints from the instruction-tuned GPT-LoRA model.
@@ -42,10 +52,11 @@ def merge_lora(
         out_dir: The path to the merged model that is created by this script.
         precision: Indicates the Fabric precision setting to use.
     """
+    check_valid_checkpoint_dir(checkpoint_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+
     precision = precision or get_default_supported_precision(training=False)
     fabric = L.Fabric(devices=1, precision=precision)
-
-    check_valid_checkpoint_dir(checkpoint_dir)
 
     config = Config.from_json(
         checkpoint_dir / "lit_config.json",
@@ -78,6 +89,4 @@ def merge_lora(
 
 
 if __name__ == "__main__":
-    from jsonargparse import CLI
-
     CLI(merge_lora)
