@@ -31,6 +31,7 @@ from lit_gpt.utils import (
 )
 from scripts.prepare_alpaca import generate_prompt
 
+
 def setup(
     precision: Optional[str] = None,
     quantize: Optional[Literal["bnb.nf4", "bnb.nf4-dq", "bnb.fp4", "bnb.fp4-dq", "bnb.int8-training"]] = None,
@@ -96,6 +97,7 @@ def setup(
 
     if not any((lora_query, lora_key, lora_value, lora_projection, lora_mlp, lora_head)):
         fabric.print("Warning: all LoRA layers are disabled!")
+
     fabric.launch(
         main,
         devices,
@@ -116,6 +118,7 @@ def setup(
         train,
         eval,
     )
+
 
 
 def main(fabric: L.Fabric, devices: int, seed: int, config: Config, io: IOArgs, train: TrainArgs, eval: EvalArgs) -> None:
@@ -188,7 +191,9 @@ def fit(
 ) -> None:
     tokenizer = Tokenizer(io.checkpoint_dir)
     longest_seq_length, longest_seq_ix = get_longest_seq_length(train_data)
+
     model.max_seq_length = min(longest_seq_length, train.max_seq_length or float("inf"))
+
     fabric.print(
         f"The longest sequence length in the train data is {longest_seq_length}, the model's maximum sequence length is"
         f" {model.max_seq_length} and context length is {model.config.block_size}"
