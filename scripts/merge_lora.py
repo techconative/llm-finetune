@@ -16,16 +16,6 @@ sys.path.append(str(wd))
 from lit_gpt.lora import GPT, Config, lora_filter, merge_lora_weights
 from lit_gpt.utils import CLI, check_valid_checkpoint_dir, get_default_supported_precision, lazy_load
 
-lora_r = 16
-lora_alpha = 32
-lora_dropout = 0.05
-lora_query = True
-lora_key = True
-lora_value = True
-lora_projection = True
-lora_mlp = True
-lora_head = True
-
 def merge_lora(
     lora_path: Path = Path("out/lora/alpaca/lit_model_lora_finetuned.pth"),
     checkpoint_dir: Path = Path("checkpoints/stabilityai/stablelm-base-alpha-3b"),

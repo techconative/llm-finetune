@@ -5,6 +5,7 @@ __pycache__
 build
 .venv
 .vscode
+myenv
 
 # data
 data
@@ -15,5 +16,7 @@ checkpoints
 out
 wandb
 events.out.tfevents*
-
+*.out
+*.csv
 tests/reference_models
+output/

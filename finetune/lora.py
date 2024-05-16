@@ -31,36 +31,6 @@ from lit_gpt.utils import (
 )
 from scripts.prepare_alpaca import generate_prompt
 
-# 
-eval_interval = 100
-save_interval = 100
-eval_iters = 100
-eval_max_new_tokens = 100
-log_interval = 1
-devices = 1
-
-# Hyperparameters
-learning_rate = 3e-4
-batch_size = 128
-# To work in T4 SingleGPU
-micro_batch_size = 2
-gradient_accumulation_iters = batch_size // micro_batch_size
-assert gradient_accumulation_iters > 0
-max_iters = 50000  # train dataset size
-weight_decay = 0.01
-lora_r = 16
-lora_alpha = 32
-lora_dropout = 0.05
-lora_query = True
-lora_key = True
-lora_value = True
-lora_projection = True
-lora_mlp = True
-lora_head = True
-warmup_steps = 100
-
-hparams = {k: v for k, v in locals().items() if isinstance(v, (int, float, str)) and not k.startswith("_")}
-#
 
 def setup(
     precision: Optional[str] = None,
@@ -127,7 +97,7 @@ def setup(
 
     if not any((lora_query, lora_key, lora_value, lora_projection, lora_mlp, lora_head)):
         fabric.print("Warning: all LoRA layers are disabled!")
-    fabric.print(hparams)
+
     fabric.launch(
         main,
         devices,
@@ -148,6 +118,7 @@ def setup(
         train,
         eval,
     )
+
 
 
 def main(fabric: L.Fabric, devices: int, seed: int, config: Config, io: IOArgs, train: TrainArgs, eval: EvalArgs) -> None:
@@ -221,10 +192,7 @@ def fit(
     tokenizer = Tokenizer(io.checkpoint_dir)
     longest_seq_length, longest_seq_ix = get_longest_seq_length(train_data)
 
-    # The existing code model.max_seq_length = longest_seq_length
-    # sets the maximum length based on the training data, which seem to less. Hence setting it to a hardcoded number.
-    model.max_seq_length = 500
-    # model.max_seq_length = min(longest_seq_length, train.max_seq_length or float("inf"))
+    model.max_seq_length = min(longest_seq_length, train.max_seq_length or float("inf"))
 
     fabric.print(
         f"The longest sequence length in the train data is {longest_seq_length}, the model's maximum sequence length is"
